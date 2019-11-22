@@ -1,7 +1,5 @@
 package org.interledger.spsp.server.config.model;
 
-import org.interledger.connector.persistence.repositories.AccountSettingsRepository;
-import org.interledger.connector.settings.ConnectorSettings;
 import org.interledger.core.InterledgerAddress;
 import org.interledger.link.Link;
 import org.interledger.spsp.server.model.SpspServerSettings;
@@ -9,12 +7,8 @@ import org.interledger.spsp.server.model.SpspServerSettings;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Pojo class for automatic mapping of configuration properties via Spring's {@link ConfigurationProperties}
+ * POJO class for automatic mapping of configuration properties via Spring's {@link ConfigurationProperties}
  * annotation.
- * <p>
- * Note that this class supports adding Accounts from a properties file, although these accounts are not accessible from
- * {@link ConnectorSettings}. Instead, all accounts should be accessed via the {@link AccountSettingsRepository}
- * instead.
  */
 @ConfigurationProperties(prefix = "interledger.spsp-server")
 public class SpspServerSettingsFromPropertyFile implements SpspServerSettings {

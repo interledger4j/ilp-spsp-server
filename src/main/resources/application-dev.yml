@@ -5,12 +5,12 @@ spring:
     include: h2, management, jks
 
 interledger:
-  spspServer:
+  spsp-server:
     # Base64-encoded String of bytes.
-    serverSecret: aQLR5IWAGV2vKnBhnFFsl2cXOCh9u0IWz3PiA64KlJ8=
-    parent-account:
+    server-secret: aQLR5IWAGV2vKnBhnFFsl2cXOCh9u0IWz3PiA64KlJ8=
+    parentAccount:
       id: alice
-      link-type: ILP_OVER_HTTP
+      linkType: ILP_OVER_HTTP
       asset-code: XRP
       asset-scale: 9
       maximum-packet-amount: 100001
@@ -28,15 +28,11 @@ interledger:
       custom-settings:
         ilpOverHttp:
           incoming:
-            auth_type: JWT_HS_256
-            token_issuer: https://alice.example.com/
-            token_audience: https://connie.example.com/
-            token_subject: alice
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
+            auth_type: SIMPLE
+            token_subject: user_amgl3h6l
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADFP1VOP5YiqFF36-RaqYRnUuqf5PrToHyM-HUvpUQ215H7BiHkIcy2TKSQO9lTlEBBVSMRUfdT0=
           outgoing:
-            auth_type: JWT_HS_256
-            token_issuer: https://alice.example.com/
-            token_audience: https://connie.example.com/
-            token_subject: alice
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
-            url: https://alice.example.com/
+            auth_type: SIMPLE
+            token_subject: user_amgl3h6l
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADFP1VOP5YiqFF36-RaqYRnUuqf5PrToHyM-HUvpUQ215H7BiHkIcy2TKSQO9lTlEBBVSMRUfdT0=
+            url: https://rs3.xpring.dev/ilp

@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 })
 public class SpspServerConfig {
 
-  @Value("${interledger.spspServer.serverSecret}")
+  @Value("${interledger.spsp-server.server-secret}")
   private String serverSecretB64;
 
   @Autowired

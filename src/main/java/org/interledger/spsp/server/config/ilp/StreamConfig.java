@@ -37,8 +37,10 @@ public class StreamConfig {
 
   @Bean
   protected StreamReceiver streamReceiver(
-    final ServerSecretSupplier serverSecretSupplier, final StreamConnectionGenerator streamConnectionGenerator,
-    final StreamEncryptionService streamEncryptionService, final CodecContext streamCodecContext
+    final ServerSecretSupplier serverSecretSupplier,
+    final StreamConnectionGenerator streamConnectionGenerator,
+    final StreamEncryptionService streamEncryptionService,
+    final CodecContext streamCodecContext
   ) {
     return new StatelessStreamReceiver(
       serverSecretSupplier, streamConnectionGenerator, streamEncryptionService, streamCodecContext

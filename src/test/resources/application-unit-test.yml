@@ -13,8 +13,8 @@ interledger:
     parent-account:
       id: alice
       link-type: ILP_OVER_HTTP
-      assetCode: XRP
-      assetScale: 9
+      asset-code: XRP
+      asset-scale: 9
       maximum-packet-amount: 100001
 #      settlement-engine-details:
 #        url: "https://example.com"
@@ -22,7 +22,7 @@ interledger:
 #        custom-settings:
 #          foo: bar1
 #          boo: baz1
-      balanceSettings:
+      balance-settings:
         min-balance: 1
         max-balance: 2
         settle-threshold: 10000001

@@ -1,15 +1,12 @@
 package org.interledger.spsp.server.config.ilp;
 
 import static okhttp3.CookieJar.NO_COOKIES;
-import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_PARENT_CONNECTOR;
+import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_PARENT_ACCOUNT;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.LINK_TYPE;
 
-import org.interledger.codecs.ilp.InterledgerCodecContextFactory;
 import org.interledger.crypto.Decryptor;
-import org.interledger.crypto.EncryptedSecret;
 import org.interledger.link.LinkFactoryProvider;
 import org.interledger.link.http.IlpOverHttpLink;
-import org.interledger.link.http.IlpOverHttpLinkFactory;
 import org.interledger.link.http.IlpOverHttpLinkSettings;
 import org.interledger.spsp.server.model.ParentAccountSettings;
 import org.interledger.spsp.server.model.SpspServerSettings;
@@ -30,8 +27,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import javax.annotation.PostConstruct;
-
 /**
  * <p>Configures ILP-over-HTTP, which provides a single Link-layer mechanism for this Connector's peers.</p>
  *
@@ -39,32 +34,19 @@ import javax.annotation.PostConstruct;
  * ILP-over-HTTP client links.</p>
  */
 @Configuration
-@ConditionalOnProperty(prefix = INTERLEDGER_SPSP_SERVER_PARENT_CONNECTOR, name = LINK_TYPE, havingValue = IlpOverHttpLink.LINK_TYPE_STRING)
+@ConditionalOnProperty(prefix = INTERLEDGER_SPSP_SERVER_PARENT_ACCOUNT, name = LINK_TYPE, havingValue = IlpOverHttpLink.LINK_TYPE_STRING)
 public class IlpOverHttpConfig {
 
   public static final String ILP_OVER_HTTP = "ILP-over-HTTP";
-  @Autowired
-  Supplier<SpspServerSettings> serverSettingsSupplier;
-  @Autowired
-  private ObjectMapper objectMapper;
-
-  //  @Autowired
-//  private Environment environment;
-  @Autowired
-  @Qualifier(ILP_OVER_HTTP)
-  private OkHttpClient ilpOverHttpClient;
 
   @Autowired
-  private LinkFactoryProvider linkFactoryProvider;
-
-  @Autowired
-  private Decryptor decryptor;
+  private Supplier<SpspServerSettings> serverSettingsSupplier;
 
   @Bean
   @Qualifier(ILP_OVER_HTTP)
   protected ConnectionPool ilpOverHttpConnectionPool(
-    @Value("${interledger.connector.ilpOverHttp.connectionDefaults.maxIdleConnections:5}") final int defaultMaxIdleConnections,
-    @Value("${interledger.connector.ilpOverHttp.connectionDefaults.keepAliveMinutes:1}") final long defaultConnectionKeepAliveMinutes
+    @Value("${interledger.spspServer.ilpOverHttp.connectionDefaults.maxIdleConnections:5}") final int defaultMaxIdleConnections,
+    @Value("${interledger.spspServer.ilpOverHttp.connectionDefaults.keepAliveMinutes:1}") final long defaultConnectionKeepAliveMinutes
   ) {
     return new ConnectionPool(
       defaultMaxIdleConnections,
@@ -93,9 +75,9 @@ public class IlpOverHttpConfig {
   @Qualifier(ILP_OVER_HTTP)
   protected OkHttpClient ilpOverHttpClient(
     @Qualifier(ILP_OVER_HTTP) final ConnectionPool ilpOverHttpConnectionPool,
-    @Value("${interledger.connector.ilpOverHttp.connectionDefaults.connectTimeoutMillis:1000}") final long defaultConnectTimeoutMillis,
-    @Value("${interledger.connector.ilpOverHttp.connectionDefaults.readTimeoutMillis:60000}") final long defaultReadTimeoutMillis,
-    @Value("${interledger.connector.ilpOverHttp.connectionDefaults.writeTimeoutMillis:60000}") final long defaultWriteTimeoutMillis
+    @Value("${interledger.spspServer.ilpOverHttp.connectionDefaults.connectTimeoutMillis:1000}") final long defaultConnectTimeoutMillis,
+    @Value("${interledger.spspServer.ilpOverHttp.connectionDefaults.readTimeoutMillis:60000}") final long defaultReadTimeoutMillis,
+    @Value("${interledger.spspServer.ilpOverHttp.connectionDefaults.writeTimeoutMillis:60000}") final long defaultWriteTimeoutMillis
   ) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS).build();
@@ -132,23 +114,5 @@ public class IlpOverHttpConfig {
     return IlpOverHttpLinkSettings
       .fromCustomSettings(parentAccountSettings.customSettings())
       .build();
-  }
-
-  @PostConstruct
-  public void startup() {
-    // The value passed-in here as `encryptedConnectorPropertyStringBytes` will actually be an encrypted property as
-    // encrypted via connector-crypto-cli. For testing purposes, reference the SpspServer properties for a given
-    // account.
-    org.interledger.link.http.auth.Decryptor linkDecryptor = encryptedConnectorPropertyStringBytes -> decryptor.decrypt(
-      EncryptedSecret.fromEncodedValue(new String(encryptedConnectorPropertyStringBytes))
-    );
-
-    // TODO: FIXME. This factory should read from properties.
-    linkFactoryProvider.registerLinkFactory(
-      IlpOverHttpLink.LINK_TYPE,
-      new IlpOverHttpLinkFactory(
-        ilpOverHttpClient, linkDecryptor, objectMapper, InterledgerCodecContextFactory.oer()
-      )
-    );
   }
 }

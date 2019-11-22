@@ -1,5 +1,5 @@
 interledger:
-  spspServer:
+  spsp-server:
     keystore:
       jks:
         enabled: true

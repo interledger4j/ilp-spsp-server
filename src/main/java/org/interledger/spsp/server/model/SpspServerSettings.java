@@ -7,11 +7,13 @@ import org.interledger.link.Link;
 import org.interledger.spsp.server.model.ImmutableSpspServerSettings.Builder;
 
 import org.immutables.value.Value;
+import org.immutables.value.Value.Modifiable;
 
 /**
  * A view of the settings currently configured for this Connector.
  */
 @Value.Immutable(intern = true)
+@Modifiable
 public interface SpspServerSettings {
 
   static Builder builder() {

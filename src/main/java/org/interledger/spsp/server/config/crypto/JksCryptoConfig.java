@@ -8,15 +8,10 @@ import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.IN
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_KEYSTORE_JKS_SECRET0_ALIAS;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_KEYSTORE_JKS_SECRET0_PASSWORD;
 
-import org.interledger.connector.crypto.ConnectorEncryptionService;
-import org.interledger.connector.crypto.DefaultConnectorEncryptionService;
-import org.interledger.crypto.EncryptionAlgorithm;
 import org.interledger.crypto.EncryptionException;
 import org.interledger.crypto.EncryptionService;
 import org.interledger.crypto.JavaKeystoreLoader;
-import org.interledger.crypto.KeyStoreType;
 import org.interledger.crypto.impl.JksEncryptionService;
-import org.interledger.spsp.server.model.SpspServerSettings;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
-import java.util.function.Supplier;
 
 import javax.crypto.SecretKey;
 
@@ -67,17 +61,6 @@ public class JksCryptoConfig {
   @Bean
   EncryptionService encryptionService(SecretKey secret0Key) throws NoSuchAlgorithmException {
     return new JksEncryptionService(secret0Key);
-  }
-
-  @Bean
-  ConnectorEncryptionService connectorEncryptionService(
-    final EncryptionService encryptionService, final Supplier<SpspServerSettings> spspServerSettings
-  ) {
-    return new DefaultConnectorEncryptionService(encryptionService,
-      KeyStoreType.JKS,
-      jksFilename,
-      spspServerSettings.get().keys(),
-      EncryptionAlgorithm.AES_GCM);
   }
 
 }

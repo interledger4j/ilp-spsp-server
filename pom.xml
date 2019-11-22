@@ -19,7 +19,7 @@
         <container.version>${project.version}</container.version>
 
         <java.version>1.8</java.version>
-        <ilp.version>HEAD-SNAPSHOT</ilp.version> <!-- TODO: FIXME -->
+        <ilp.version>1.0.1</ilp.version>
         <ilp-connector.version>0.1.0-SNAPSHOT</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>

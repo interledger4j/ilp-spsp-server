@@ -1,0 +1,42 @@
+# Used for pure development purposes. All accounts are simulated using the Loopback Link.
+# See https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#common-application-properties
+spring:
+  profiles:
+    include: h2, management, jks
+
+interledger:
+  spspServer:
+    # Base64-encoded String of bytes.
+    serverSecret: aQLR5IWAGV2vKnBhnFFsl2cXOCh9u0IWz3PiA64KlJ8=
+    parent-account:
+      id: alice
+      link-type: ILP_OVER_HTTP
+      asset-code: XRP
+      asset-scale: 9
+      maximum-packet-amount: 100001
+      #      settlement-engine-details:
+      #        url: "https://example.com"
+      #        settlement-engine-accountId: seAccount
+      #        custom-settings:
+      #          foo: bar1
+      #          boo: baz1
+      balance-settings:
+        min-balance: 1
+        max-balance: 2
+        settle-threshold: 10000001
+        settle-to: 3
+      custom-settings:
+        ilpOverHttp:
+          incoming:
+            auth_type: JWT_HS_256
+            token_issuer: https://alice.example.com/
+            token_audience: https://connie.example.com/
+            token_subject: alice
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
+          outgoing:
+            auth_type: JWT_HS_256
+            token_issuer: https://alice.example.com/
+            token_audience: https://connie.example.com/
+            token_subject: alice
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
+            url: https://alice.example.com/

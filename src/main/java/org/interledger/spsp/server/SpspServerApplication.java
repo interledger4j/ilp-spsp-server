@@ -96,7 +96,7 @@ public class SpspServerApplication {
 
     logger.info(
       "IL-DCP Succeeded! operatorAddress={} assetCode={} assetScale={}",
-      modifiableSpspServerSettings.operatorAddress(),
+      modifiableSpspServerSettings.operatorAddress().getValue(),
       modifiableSpspServerSettings.parentAccountSettings().assetCode(),
       modifiableSpspServerSettings.parentAccountSettings().assetScale()
     );

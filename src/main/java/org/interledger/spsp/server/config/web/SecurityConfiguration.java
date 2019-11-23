@@ -69,13 +69,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     //.antMatchers(HttpMethod.GET, METRICS_ENDPOINT_URL_PATH).permitAll() // permitAll if hidden by LB.
     ;
 
+
     // WARNING: Don't add `denyAll` here...it's taken care of after the JWT security below. To verify, turn on debugging
     // for Spring Security (e.g.,  org.springframework.security: DEBUG) and look at the security filter chain).
 
     http
-      .httpBasic()
-      .and()
-      .authorizeRequests()
+      //.httpBasic()
+      //.and()
+      //.authorizeRequests()
 
       // @formatter:off
 
@@ -84,12 +85,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       ////////
 
       // Actuator URLs
-      .antMatchers(HttpMethod.GET, "/**").permitAll()
+      //.antMatchers(HttpMethod.GET, "/**").permitAll()
 
       // Everything else...
-      .anyRequest().denyAll()
+      //.anyRequest().denyAll()
 
-      .and()
+      //.and()
       .addFilter(securityContextHolderAwareRequestFilter())
       .cors()
       .and()

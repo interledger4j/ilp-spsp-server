@@ -4,7 +4,6 @@ import org.interledger.connector.accounts.AccountBalanceSettings;
 import org.interledger.connector.accounts.AccountId;
 import org.interledger.connector.accounts.AccountSettings;
 import org.interledger.connector.accounts.ImmutableAccountBalanceSettings;
-import org.interledger.connector.accounts.ImmutableAccountSettings;
 import org.interledger.connector.accounts.SettlementEngineDetails;
 import org.interledger.core.InterledgerAddress;
 import org.interledger.link.LinkType;
@@ -24,8 +23,8 @@ import java.util.Optional;
  */
 public interface ParentAccountSettings {
 
-  static ImmutableAccountSettings.Builder builder() {
-    return ImmutableAccountSettings.builder();
+  static ImmutableParentAccountSettings.Builder builder() {
+    return ImmutableParentAccountSettings.builder();
   }
 
   /**

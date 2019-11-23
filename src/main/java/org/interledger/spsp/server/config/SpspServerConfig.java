@@ -7,6 +7,7 @@ import org.interledger.spsp.server.config.ilp.LinkConfig;
 import org.interledger.spsp.server.config.ilp.StreamConfig;
 import org.interledger.spsp.server.config.jackson.JacksonConfig;
 import org.interledger.spsp.server.config.model.SpspServerSettingsFromPropertyFile;
+import org.interledger.spsp.server.config.web.SpringSpspServerWebMvc;
 import org.interledger.spsp.server.model.SpspServerSettings;
 import org.interledger.stream.crypto.Random;
 import org.interledger.stream.receiver.ServerSecretSupplier;
@@ -29,6 +30,7 @@ import java.util.function.Supplier;
   CryptoConfig.class,
   LinkConfig.class,
   StreamConfig.class,
+  SpringSpspServerWebMvc.class,
 })
 public class SpspServerConfig {
 

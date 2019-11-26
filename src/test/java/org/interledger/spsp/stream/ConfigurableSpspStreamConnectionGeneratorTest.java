@@ -8,14 +8,17 @@ import org.interledger.core.InterledgerAddress;
 import org.interledger.core.InterledgerCondition;
 import org.interledger.core.InterledgerPreparePacket;
 import org.interledger.core.SharedSecret;
+import org.interledger.spsp.StreamConnectionDetails;
 import org.interledger.stream.Denomination;
 import org.interledger.stream.crypto.JavaxStreamEncryptionService;
 import org.interledger.stream.receiver.ServerSecretSupplier;
+import org.interledger.stream.receiver.SpspStreamConnectionGenerator;
 import org.interledger.stream.receiver.StatelessStreamReceiver;
 import org.interledger.stream.receiver.StreamConnectionGenerator;
 
 import com.google.common.io.BaseEncoding;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -23,11 +26,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * Unit tests for {@link ConfigurableSpspStreamConnectionGenerator}.
  */
 public class ConfigurableSpspStreamConnectionGeneratorTest {
+
+  private static final int AUTH_TAG_LENGTH_BITS = 128;
+
+  private static final int AUTH_TAG_LENGTH_BYTES = AUTH_TAG_LENGTH_BITS / 8;
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
@@ -83,6 +92,24 @@ public class ConfigurableSpspStreamConnectionGeneratorTest {
         .isTrue(),
       rejectPacket -> fail()
     );
+  }
+
+  @Test
+  public void connectionDetailsSharedSecretDerivable() {
+    ConfigurableSpspStreamConnectionGenerator connectionGenerator = new ConfigurableSpspStreamConnectionGenerator();
+    final byte[] serverSecret = new byte[32];
+    final ServerSecretSupplier serverSecretSupplier = () -> serverSecret;
+    final JavaxStreamEncryptionService streamEncryptionService = new JavaxStreamEncryptionService();
+
+    StreamConnectionDetails connectionDetails = connectionGenerator.generateConnectionDetails(serverSecretSupplier,
+      InterledgerAddress.of("test.address.foo"));
+
+    final SharedSecret derivedSharedSecret = connectionGenerator
+      .deriveSecretFromAddress(() -> serverSecret, connectionDetails.destinationAddress());
+
+    String unencrypted = "bar";
+    byte[] cipherText = streamEncryptionService.encrypt(connectionDetails.sharedSecret(), unencrypted.getBytes());
+    assertThat(streamEncryptionService.decrypt(derivedSharedSecret, cipherText)).isEqualTo(unencrypted.getBytes());
   }
 
 }

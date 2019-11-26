@@ -43,36 +43,31 @@ public class ConfigurableSpspStreamConnectionGenerator extends SpspStreamConnect
     // base_address + "." + 32-bytes encoded as base64url
     final Builder streamConnectionDetailsBuilder = StreamConnectionDetails.builder();
 
-
-
     final byte[] token = Random.randBytes(18);
     final String tokenBase64 = Base64.getUrlEncoder().withoutPadding().encodeToString(token);
-    // Note the shared secret is generated from the base64-encoded version of the token, rather than from the
-    // unencoded bytes
-    final byte[] sharedSecret = Hashing
-      .hmacSha256(secretGenerator(serverSecretSupplier))
-      .hashBytes(tokenBase64.getBytes(StandardCharsets.US_ASCII))
-      .asBytes();
-
-    // TODO: FINISH ME!
 
     final String destinationAddressPrecursor = receiverAddress.with(tokenBase64).getValue();
 
     // The authTag is the first 14 bytes of the HmacSha256 of destinationAddressPrecursor
     final byte[] authTag = Arrays.copyOf(
-      Hashing.hmacSha256(sharedSecret)
+      Hashing.hmacSha256(secretGenerator(serverSecretSupplier))
         .hashBytes(destinationAddressPrecursor.getBytes(StandardCharsets.US_ASCII))
         .asBytes(),
       14
     );
 
-    final InterledgerAddress destinationAddress = InterledgerAddress.of(
-      destinationAddressPrecursor + Base64.getUrlEncoder().withoutPadding().encodeToString(authTag)
-    );
+    String destinationAddress = destinationAddressPrecursor
+      + Base64.getUrlEncoder().withoutPadding().encodeToString(authTag);
+
+    final String localPart = destinationAddress.substring(destinationAddress.lastIndexOf(".") + 1);
+    final byte[] sharedSecret = Hashing
+      .hmacSha256(secretGenerator(serverSecretSupplier))
+      .hashBytes(localPart.getBytes(StandardCharsets.US_ASCII))
+      .asBytes();
 
     return streamConnectionDetailsBuilder
       .sharedSecret(SharedSecret.of(sharedSecret))
-      .destinationAddress(destinationAddress)
+      .destinationAddress(InterledgerAddress.of(destinationAddress))
       .build();
   }
 

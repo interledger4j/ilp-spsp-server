@@ -1,7 +1,6 @@
 package org.interledger.spsp.server.config.ilp;
 
 import org.interledger.codecs.stream.StreamCodecContextFactory;
-import org.interledger.connector.ccp.codecs.CcpCodecContextFactory;
 import org.interledger.encoding.asn.framework.CodecContext;
 import org.interledger.spsp.stream.ConfigurableSpspStreamConnectionGenerator;
 import org.interledger.stream.crypto.JavaxStreamEncryptionService;

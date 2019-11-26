@@ -32,50 +32,6 @@ public class ConfigurableSpspStreamConnectionGenerator extends SpspStreamConnect
     this("ilp_stream_shared_secret");
   }
 
-  @Override
-  public StreamConnectionDetails generateConnectionDetails(
-    final ServerSecretSupplier serverSecretSupplier, final InterledgerAddress receiverAddress
-  ) {
-    Objects.requireNonNull(serverSecretSupplier, "serverSecretSupplier must not be null");
-    Objects.requireNonNull(receiverAddress, "receiverAddress must not be null");
-    Preconditions.checkArgument(serverSecretSupplier.get().length >= 32, "Server secret must be 32 bytes");
-
-    // base_address + "." + 32-bytes encoded as base64url
-    final Builder streamConnectionDetailsBuilder = StreamConnectionDetails.builder();
-
-
-
-    final byte[] token = Random.randBytes(18);
-    final String tokenBase64 = Base64.getUrlEncoder().withoutPadding().encodeToString(token);
-    // Note the shared secret is generated from the base64-encoded version of the token, rather than from the
-    // unencoded bytes
-    final byte[] sharedSecret = Hashing
-      .hmacSha256(secretGenerator(serverSecretSupplier))
-      .hashBytes(tokenBase64.getBytes(StandardCharsets.US_ASCII))
-      .asBytes();
-
-    // TODO: FINISH ME!
-
-    final String destinationAddressPrecursor = receiverAddress.with(tokenBase64).getValue();
-
-    // The authTag is the first 14 bytes of the HmacSha256 of destinationAddressPrecursor
-    final byte[] authTag = Arrays.copyOf(
-      Hashing.hmacSha256(sharedSecret)
-        .hashBytes(destinationAddressPrecursor.getBytes(StandardCharsets.US_ASCII))
-        .asBytes(),
-      14
-    );
-
-    final InterledgerAddress destinationAddress = InterledgerAddress.of(
-      destinationAddressPrecursor + Base64.getUrlEncoder().withoutPadding().encodeToString(authTag)
-    );
-
-    return streamConnectionDetailsBuilder
-      .sharedSecret(SharedSecret.of(sharedSecret))
-      .destinationAddress(destinationAddress)
-      .build();
-  }
-
   /**
    * Required-args constructor.
    *
@@ -89,6 +45,31 @@ public class ConfigurableSpspStreamConnectionGenerator extends SpspStreamConnect
   public ConfigurableSpspStreamConnectionGenerator(final String streamServerSecretGenerator) {
     this.streamServerSecretGenerator = Objects.requireNonNull(streamServerSecretGenerator)
       .getBytes(StandardCharsets.US_ASCII);
+  }
+
+  @Override
+  public StreamConnectionDetails generateConnectionDetails(
+    final ServerSecretSupplier serverSecretSupplier, final InterledgerAddress receiverAddress
+  ) {
+    Objects.requireNonNull(serverSecretSupplier, "serverSecretSupplier must not be null");
+    Objects.requireNonNull(receiverAddress, "receiverAddress must not be null");
+    Preconditions.checkArgument(serverSecretSupplier.get().length >= 32, "Server secret must be 32 bytes");
+
+    final byte[] token = Random.randBytes(18);
+    final String tokenBase64 = Base64.getUrlEncoder().withoutPadding().encodeToString(token);
+    final InterledgerAddress destinationAddress = receiverAddress.with(tokenBase64);
+
+    // Note the shared-secret is generated from the token's base64-encoded String bytes rather than from the
+    // _actual_ Base64-unencoded bytes. E.g., "foo".getBytes() is not the same as Base64.getDecoder().decode("foo")
+    final byte[] sharedSecret = Hashing
+      .hmacSha256(secretGenerator(serverSecretSupplier))
+      .hashBytes(tokenBase64.getBytes(StandardCharsets.US_ASCII))
+      .asBytes();
+
+    return StreamConnectionDetails.builder()
+      .destinationAddress(destinationAddress)
+      .sharedSecret(SharedSecret.of(sharedSecret))
+      .build();
   }
 
   @Override

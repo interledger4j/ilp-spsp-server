@@ -5,12 +5,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.interledger.codecs.stream.StreamCodecContextFactory;
 import org.interledger.core.InterledgerAddress;
-import org.interledger.core.InterledgerCondition;
 import org.interledger.core.InterledgerPreparePacket;
 import org.interledger.core.SharedSecret;
+import org.interledger.spsp.StreamConnectionDetails;
 import org.interledger.stream.Denomination;
 import org.interledger.stream.crypto.JavaxStreamEncryptionService;
+import org.interledger.stream.crypto.Random;
 import org.interledger.stream.receiver.ServerSecretSupplier;
+import org.interledger.stream.receiver.SpspStreamConnectionGenerator;
 import org.interledger.stream.receiver.StatelessStreamReceiver;
 import org.interledger.stream.receiver.StreamConnectionGenerator;
 
@@ -23,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Unit tests for {@link ConfigurableSpspStreamConnectionGenerator}.
@@ -32,9 +35,20 @@ public class ConfigurableSpspStreamConnectionGeneratorTest {
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
+  private ServerSecretSupplier serverSecretSupplier;
+  private JavaxStreamEncryptionService streamEncryptionService;
+  private StreamConnectionGenerator connectionGenerator;
+
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
+
+    // Always new and unique for each run, unless overidden in a test.
+    final byte[] serverSecret = Random.randBytes(32);
+    this.serverSecretSupplier = () -> serverSecret;
+
+    this.streamEncryptionService = new JavaxStreamEncryptionService();
+    this.connectionGenerator = new ConfigurableSpspStreamConnectionGenerator();
   }
 
   @Test
@@ -54,19 +68,15 @@ public class ConfigurableSpspStreamConnectionGeneratorTest {
     final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
     final InterledgerPreparePacket prepare = StreamCodecContextFactory.oer().read(InterledgerPreparePacket.class, bais);
 
-    final InterledgerCondition executionCondition = prepare.getExecutionCondition();
-    final byte[] serverSecret = new byte[32]; // All 0's
-    final ServerSecretSupplier serverSecretSupplier = () -> serverSecret;
+    serverSecretSupplier = () -> new byte[32]; // All 0's
 
-    final StreamConnectionGenerator connectionGenerator = new ConfigurableSpspStreamConnectionGenerator();
     final SharedSecret sharedSecret = connectionGenerator
-      .deriveSecretFromAddress(() -> serverSecret, prepare.getDestination());
+      .deriveSecretFromAddress(() -> serverSecretSupplier.get(), prepare.getDestination());
 
     assertThat(BaseEncoding.base16().encode(sharedSecret.key()))
       .withFailMessage(" Did not regenerate the same shared secret")
       .isEqualTo("B7D09D2E16E6F83C55B60E42FCD7C2B8ED49624A1DF73C59B383DBE2E8690309");
 
-    final JavaxStreamEncryptionService streamEncryptionService = new JavaxStreamEncryptionService();
     final StatelessStreamReceiver streamReceiver = new StatelessStreamReceiver(
       serverSecretSupplier, connectionGenerator, streamEncryptionService,
       StreamCodecContextFactory.oer()
@@ -78,11 +88,46 @@ public class ConfigurableSpspStreamConnectionGeneratorTest {
       .build();
 
     streamReceiver.receiveMoney(prepare, ilpAddress, denomination).handle(
-      fulfillPacket -> assertThat(fulfillPacket.getFulfillment().validateCondition(executionCondition))
+      fulfillPacket -> assertThat(fulfillPacket.getFulfillment().validateCondition(prepare.getExecutionCondition()))
         .withFailMessage("fulfillment generated does not hash to the expected condition")
         .isTrue(),
       rejectPacket -> fail()
     );
   }
 
+  @Test
+  public void usingConfigurableSpspStreamConnectionGenerator() {
+    testDecrypt(new ConfigurableSpspStreamConnectionGenerator());
+  }
+
+  @Test
+  public void usingSpspStreamConnectionGenerator() {
+    testDecrypt(new SpspStreamConnectionGenerator());
+  }
+
+  /**
+   * <p>Helper method to validate that {@code connectionGenerator} can generate a shared secret and a receiver address,
+   * both of which can be used to re-derive a shared secret that can encrypt/decrypt the same data.</p>
+   *
+   * <p>This method validates that what the {@link StreamConnectionGenerator} generates can be used properly on both
+   * sides of a STREAM payment: On the sender, and on the receiver.</p>
+   *
+   * @param connectionGenerator
+   */
+  private void testDecrypt(final StreamConnectionGenerator connectionGenerator) {
+    Objects.requireNonNull(connectionGenerator);
+
+    final StreamConnectionDetails connectionDetails =
+      connectionGenerator.generateConnectionDetails(serverSecretSupplier, InterledgerAddress.of("test.address.foo"));
+
+    final SharedSecret derivedSharedSecret = connectionGenerator
+      .deriveSecretFromAddress(() -> serverSecretSupplier.get(), connectionDetails.destinationAddress());
+
+    // Assert that encrypt + decrypt are the same for the generated shared-secret and the derived shared secret
+    final String unencrypted = "bar";
+    final byte[] cipherText = streamEncryptionService.encrypt(connectionDetails.sharedSecret(), unencrypted.getBytes());
+
+    assertThat(streamEncryptionService.decrypt(derivedSharedSecret, cipherText))
+      .isEqualTo(unencrypted.getBytes());
+  }
 }

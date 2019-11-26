@@ -1,5 +1,6 @@
 package org.interledger.spsp.server.config.ilp;
 
+import org.interledger.codecs.stream.StreamCodecContextFactory;
 import org.interledger.connector.ccp.codecs.CcpCodecContextFactory;
 import org.interledger.encoding.asn.framework.CodecContext;
 import org.interledger.spsp.stream.ConfigurableSpspStreamConnectionGenerator;
@@ -22,7 +23,7 @@ public class StreamConfig {
   @Bean
   @Qualifier(STREAM)
   public CodecContext streamCodecContext() {
-    return CcpCodecContextFactory.oer();
+    return StreamCodecContextFactory.oer();
   }
 
   @Bean

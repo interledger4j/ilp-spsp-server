@@ -3,6 +3,7 @@ package org.interledger.spsp.server.config;
 import org.interledger.core.InterledgerAddress;
 import org.interledger.link.Link;
 import org.interledger.spsp.server.config.crypto.CryptoConfig;
+import org.interledger.spsp.server.config.ildcp.IldcpConfig;
 import org.interledger.spsp.server.config.ilp.LinkConfig;
 import org.interledger.spsp.server.config.ilp.StreamConfig;
 import org.interledger.spsp.server.config.jackson.JacksonConfig;
@@ -31,6 +32,7 @@ import java.util.function.Supplier;
   LinkConfig.class,
   StreamConfig.class,
   SpringSpspServerWebMvc.class,
+  IldcpConfig.class,
 })
 public class SpspServerConfig {
 

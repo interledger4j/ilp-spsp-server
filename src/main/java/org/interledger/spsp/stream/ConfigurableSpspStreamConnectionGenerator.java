@@ -2,7 +2,6 @@ package org.interledger.spsp.stream;
 
 import org.interledger.core.InterledgerAddress;
 import org.interledger.core.SharedSecret;
-import org.interledger.spsp.ImmutableStreamConnectionDetails.Builder;
 import org.interledger.spsp.StreamConnectionDetails;
 import org.interledger.stream.crypto.Random;
 import org.interledger.stream.receiver.ServerSecretSupplier;
@@ -12,10 +11,13 @@ import com.google.common.base.Preconditions;
 import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
+/**
+ * @deprecated Remove this once https://github.com/hyperledger/quilt/issues/374 is fixed.
+ */
+@Deprecated
 public class ConfigurableSpspStreamConnectionGenerator extends SpspStreamConnectionGenerator {
 
   private final byte[] streamServerSecretGenerator;

@@ -7,6 +7,7 @@ import org.interledger.crypto.Decryptor;
 import org.interledger.crypto.EncryptedSecret;
 import org.interledger.link.Link;
 import org.interledger.link.LinkFactoryProvider;
+import org.interledger.link.LinkId;
 import org.interledger.link.LoopbackLink;
 import org.interledger.link.LoopbackLinkFactory;
 import org.interledger.link.PacketRejector;
@@ -14,6 +15,7 @@ import org.interledger.link.PingLoopbackLink;
 import org.interledger.link.PingLoopbackLinkFactory;
 import org.interledger.link.http.IlpOverHttpLink;
 import org.interledger.link.http.IlpOverHttpLinkFactory;
+import org.interledger.link.http.IlpOverHttpLinkSettings;
 import org.interledger.spsp.server.model.SpspServerSettings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,19 +37,32 @@ public class LinkConfig {
   protected OkHttpClient ilpOverHttpClient;
 
   @Autowired
+  private SpspServerSettings spspServerSettings;
+
+  @Autowired
   private ObjectMapper objectMapper;
 
   @Autowired
   private Decryptor decryptor;
 
+  @Autowired
+  private LinkFactoryProvider linkFactoryProvider;
+
   /**
-   * The link to the parent connector that this SpspServer is a chile of.
+   * The link to the parent connector that this SpspServer is a child of.
    *
    * @return A {@link Link}.
    */
   @Bean
   protected Link parentLink() {
-    final Link parentLink = null;
+    final IlpOverHttpLinkSettings linkSettings = IlpOverHttpLinkSettings
+      .fromCustomSettings(spspServerSettings.parentAccountSettings().customSettings())
+      .build();
+
+    final Link<?> parentLink = linkFactoryProvider.getLinkFactory(IlpOverHttpLink.LINK_TYPE)
+      .constructLink(() -> spspServerSettings.operatorAddress(), linkSettings);
+
+    parentLink.setLinkId(LinkId.of("parentConnector"));
 
     return parentLink;
   }

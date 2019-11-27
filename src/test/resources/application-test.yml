@@ -10,7 +10,7 @@ spring:
 interledger:
   spsp-server:
     # Base64-encoded String of bytes.
-    #server-secret: aQLR5IWAGV2vKnBhnFFsl2cXOCh9u0IWz3PiA64KlJ8=
+    server-secret: aQLR5IWAGV2vKnBhnFFsl2cXOCh9u0IWz3PiA64KlJ8=
     parent-account:
       id: alice
       linkType: ILP_OVER_HTTP
@@ -21,13 +21,13 @@ interledger:
           incoming:
             auth_type: SIMPLE
             token_subject: alice
-            # A simulated routing secret, which is a seed used for generating routing table auth values.
             # Represents the plaintext value of `shh`, encrypted.
             shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
           outgoing:
             auth_type: SIMPLE
             token_subject: bob
             # A simulated routing secret, which is a seed used for generating routing table auth values.
-            # Represents the plaintext value of `shh`, encrypted.
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
-            url: https://localhost:8080/ilp
+            # Represents the encrypted version of the plaintext value of `alice:c2ho` (`c2ho` is the secret `shh` in
+            # Base64).
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADMJupRGa3o_0W_WdThOrBmftwloxbM9yz05gzVvEd-J8idS-9BVG
+            url: http://localhost:8080/

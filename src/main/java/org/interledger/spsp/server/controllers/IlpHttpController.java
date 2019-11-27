@@ -3,7 +3,9 @@ package org.interledger.spsp.server.controllers;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_PARENT_ACCOUNT;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.LINK_TYPE;
 
+import org.interledger.core.InterledgerErrorCode;
 import org.interledger.core.InterledgerPreparePacket;
+import org.interledger.core.InterledgerRejectPacket;
 import org.interledger.core.InterledgerResponsePacket;
 import org.interledger.link.http.IlpOverHttpLink;
 import org.interledger.spsp.server.model.SpspServerSettings;
@@ -63,6 +65,16 @@ public class IlpHttpController {
       .assetScale((short) spspServerSettings.parentAccountSettings().assetScale())
       .assetCode(spspServerSettings.parentAccountSettings().assetCode())
       .build();
+
+    // TODO: Remove once https://github.com/hyperledger/quilt/issues/378 is fixed.
+    if(preparePacket.getData().length <= 0){
+      return InterledgerRejectPacket.builder()
+        .triggeredBy(spspServerSettings.operatorAddress())
+        .code(InterledgerErrorCode.F06_UNEXPECTED_PAYMENT)
+        .message("No STREAM frames in Prepare packet")
+        .build();
+    }
+
     return streamReceiver.receiveMoney(preparePacket, spspServerSettings.operatorAddress(), denomination)
       .map(fulfillPacket -> {
           logger.info("Packet fulfilled! preparePacket={} fulfillPacket={}", preparePacket, fulfillPacket);

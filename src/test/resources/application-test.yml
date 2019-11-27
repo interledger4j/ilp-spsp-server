@@ -26,8 +26,6 @@ interledger:
           outgoing:
             auth_type: SIMPLE
             token_subject: bob
-            # A simulated routing secret, which is a seed used for generating routing table auth values.
-            # Represents the encrypted version of the plaintext value of `alice:c2ho` (`c2ho` is the secret `shh` in
-            # Base64).
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADMJupRGa3o_0W_WdThOrBmftwloxbM9yz05gzVvEd-J8idS-9BVG
+            # Represents the plaintext value of `shh`, encrypted.
+            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
             url: http://localhost:8080/

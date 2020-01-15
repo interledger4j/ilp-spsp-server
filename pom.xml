@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.interledger.spsp</groupId>
     <artifactId>spsp-server</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>HEAD-SNAPSHOT</version>
     <name>spsp-server</name>
     <description>An Interledger SPSP server with a stateless STREAM receiver that publishes events.</description>
 
@@ -19,12 +19,12 @@
         <container.version>${project.version}</container.version>
 
         <java.version>1.8</java.version>
-        <ilp.version>1.0.1</ilp.version>
-        <ilp-connector.version>0.1.0-SNAPSHOT</ilp-connector.version>
+        <ilp.version>1.0.3</ilp.version>
+        <ilp-connector.version>HEAD-SNAPSHOT</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>
-        <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
 
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
         <checkstyle.violationSeverity>error</checkstyle.violationSeverity>
@@ -416,13 +416,9 @@
 
                                     <!-- Ignore these so that the KMS client dictates the versions -->
                                     <ignoredDependency>com.google.http-client:google-http-client:jar</ignoredDependency>
-                                    <ignoredDependency>com.google.protobuf:protobuf-java:jar</ignoredDependency>
-                                    <ignoredDependency>com.google.api.grpc:proto-google-cloud-kms-v1:jar
-                                    </ignoredDependency>
 
                                     <!-- Not used for compile time, only for OkHttp 4 support-->
-                                    <ignoredDependency>com.fasterxml.jackson.module:jackson-module-kotlin:jar
-                                    </ignoredDependency>
+                                    <ignoredDependency>com.fasterxml.jackson.module:jackson-module-kotlin:jar</ignoredDependency>
 
                                     <ignoredDependency>org.liquibase:liquibase-core:jar</ignoredDependency>
                                     <ignoredDependency>org.postgresql:postgresql:jar</ignoredDependency>
@@ -440,14 +436,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
 
     <profiles>
         <profile>
@@ -485,4 +473,45 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>ilp-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh-snapshots-interledger</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh-snapshots-interledger</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -1,6 +1,5 @@
 package org.interledger.spsp.server.controllers;
 
-import static okhttp3.CookieJar.NO_COOKIES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.interledger.core.InterledgerConstants.ALL_ZEROS_FULFILLMENT;
 import static org.junit.Assert.fail;
@@ -24,6 +23,8 @@ import org.interledger.link.http.IlpOverHttpLinkSettings.AuthType;
 import org.interledger.link.http.IncomingLinkSettings;
 import org.interledger.link.http.OutgoingLinkSettings;
 import org.interledger.spsp.StreamConnectionDetails;
+import org.interledger.spsp.client.SimpleSpspClient;
+import org.interledger.spsp.client.SpspClient;
 import org.interledger.spsp.server.SpspServerApplication;
 import org.interledger.spsp.server.controllers.IlpOverHttpStreamReceiverTest.TestConfiguration;
 import org.interledger.spsp.server.model.SpspServerSettings;
@@ -36,10 +37,7 @@ import org.interledger.stream.sender.SimpleStreamSender;
 
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.UnsignedLong;
-import okhttp3.ConnectionPool;
-import okhttp3.ConnectionSpec;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,11 +59,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -102,18 +98,6 @@ public class IlpOverHttpStreamReceiverTest {
   // The Link that can connect to the running SPSP server's `/ilp` endpoint (e.g., simulates traffic coming from the
   // simulated Connector).
   private Link<?> linkToSpspServer;
-
-  private static OkHttpClient newHttpClient() {
-    ConnectionPool connectionPool = new ConnectionPool(10, 5, TimeUnit.MINUTES);
-    ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS).build();
-    OkHttpClient.Builder builder = new OkHttpClient.Builder()
-      .connectionSpecs(Arrays.asList(spec, ConnectionSpec.CLEARTEXT))
-      .cookieJar(NO_COOKIES)
-      .connectTimeout(5000, TimeUnit.MILLISECONDS)
-      .readTimeout(30, TimeUnit.SECONDS)
-      .writeTimeout(30, TimeUnit.SECONDS);
-    return builder.connectionPool(connectionPool).build();
-  }
 
   @Before
   public void setUp() {
@@ -203,11 +187,8 @@ public class IlpOverHttpStreamReceiverTest {
     linkToSpspServer.sendPacket(preparePacketWithInvalidAddress).handle(
       fulfillPacket -> fail("Should have rejected due to invalid ILP address token but fulfilled: " + fulfillPacket),
       rejectPacket -> {
-        // TODO: Once See https://github.com/hyperledger/quilt/issues/378 is fixed, this should become an F06.
-        //assertThat(rejectPacket.getCode()).isEqualTo(InterledgerErrorCode.F06_UNEXPECTED_PAYMENT);
-        assertThat(rejectPacket.getCode()).isEqualTo(InterledgerErrorCode.T00_INTERNAL_ERROR);
-        assertThat(rejectPacket.getMessage())
-          .isEqualTo("{\"title\":\"Internal Server Error\",\"status\":500,\"detail\":\"Tag mismatch!\"}");
+        assertThat(rejectPacket.getCode()).isEqualTo(InterledgerErrorCode.F06_UNEXPECTED_PAYMENT);
+        assertThat(rejectPacket.getMessage()).isEqualTo("Could not decrypt data");
         assertThat(rejectPacket.getTriggeredBy()).isEqualTo(Optional.of(SPSP_OPERATOR));
         assertThat(rejectPacket.getData().length).isEqualTo(0);
       }
@@ -217,7 +198,7 @@ public class IlpOverHttpStreamReceiverTest {
   @Test
   public void prepareWithValidStreamFrames() {
     // Create SPSP client and fetch shared secret and destination address using SPSP client
-    SpspClient spspClient = new SpspClient(newHttpClient(), ALICE + ":" + "shh", spspServerUrl.toString());
+    SpspClient spspClient = new SimpleSpspClient();
     StreamConnectionDetails connectionDetails = spspClient.getStreamConnectionDetails(
       spspServerUrl.newBuilder().addPathSegment(ALICE).build()
     );

@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.interledger.spsp</groupId>
     <artifactId>spsp-server</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>HEAD-SNAPSHOT</version>
     <name>spsp-server</name>
     <description>An Interledger SPSP server with a stateless STREAM receiver that publishes events.</description>
 
@@ -20,7 +20,7 @@
 
         <java.version>1.8</java.version>
         <ilp.version>1.0.3</ilp.version>
-        <ilp-connector.version>0.1.0-SNAPSHOT</ilp-connector.version>
+        <ilp-connector.version>HEAD-SNAPSHOT</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>

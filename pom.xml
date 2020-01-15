@@ -24,7 +24,7 @@
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>
-        <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
 
         <checkstyle.config.location>checkstyle.xml</checkstyle.config.location>
         <checkstyle.violationSeverity>error</checkstyle.violationSeverity>

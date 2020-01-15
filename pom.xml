@@ -19,7 +19,7 @@
         <container.version>${project.version}</container.version>
 
         <java.version>1.8</java.version>
-        <ilp.version>1.0.1</ilp.version>
+        <ilp.version>1.0.3</ilp.version>
         <ilp-connector.version>0.1.0-SNAPSHOT</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
@@ -416,13 +416,9 @@
 
                                     <!-- Ignore these so that the KMS client dictates the versions -->
                                     <ignoredDependency>com.google.http-client:google-http-client:jar</ignoredDependency>
-                                    <ignoredDependency>com.google.protobuf:protobuf-java:jar</ignoredDependency>
-                                    <ignoredDependency>com.google.api.grpc:proto-google-cloud-kms-v1:jar
-                                    </ignoredDependency>
 
                                     <!-- Not used for compile time, only for OkHttp 4 support-->
-                                    <ignoredDependency>com.fasterxml.jackson.module:jackson-module-kotlin:jar
-                                    </ignoredDependency>
+                                    <ignoredDependency>com.fasterxml.jackson.module:jackson-module-kotlin:jar</ignoredDependency>
 
                                     <ignoredDependency>org.liquibase:liquibase-core:jar</ignoredDependency>
                                     <ignoredDependency>org.postgresql:postgresql:jar</ignoredDependency>

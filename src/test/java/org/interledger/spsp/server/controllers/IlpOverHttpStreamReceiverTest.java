@@ -164,7 +164,7 @@ public class IlpOverHttpStreamReceiverTest {
         "Should have rejected due to no STREAM Frame data in the Prepare packet but fulfilled: " + fulfillPacket),
       rejectPacket -> {
         assertThat(rejectPacket.getCode()).isEqualTo(InterledgerErrorCode.F06_UNEXPECTED_PAYMENT);
-        assertThat(rejectPacket.getMessage()).isEqualTo("No STREAM frames in Prepare packet");
+        assertThat(rejectPacket.getMessage()).isEqualTo("No STREAM packet bytes available to decrypt");
         assertThat(rejectPacket.getTriggeredBy()).isEqualTo(Optional.of(SPSP_OPERATOR));
         assertThat(rejectPacket.getData().length).isEqualTo(0);
       }

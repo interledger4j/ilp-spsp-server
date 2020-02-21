@@ -66,22 +66,13 @@ public class IlpHttpController {
       .assetCode(spspServerSettings.parentAccountSettings().assetCode())
       .build();
 
-    // TODO: Remove once https://github.com/hyperledger/quilt/issues/378 is fixed.
-    if(preparePacket.getData().length <= 0){
-      return InterledgerRejectPacket.builder()
-        .triggeredBy(spspServerSettings.operatorAddress())
-        .code(InterledgerErrorCode.F06_UNEXPECTED_PAYMENT)
-        .message("No STREAM frames in Prepare packet")
-        .build();
-    }
-
     return streamReceiver.receiveMoney(preparePacket, spspServerSettings.operatorAddress(), denomination)
       .map(fulfillPacket -> {
           logger.info("Packet fulfilled! preparePacket={} fulfillPacket={}", preparePacket, fulfillPacket);
           return fulfillPacket;
         },
         rejectPacket -> {
-          logger.info("Packet fulfilled! preparePacket={} fulfillPacket={}", preparePacket, rejectPacket);
+          logger.info("Packet rejected! preparePacket={} rejectPacket={}", preparePacket, rejectPacket);
           return rejectPacket;
         }
       );

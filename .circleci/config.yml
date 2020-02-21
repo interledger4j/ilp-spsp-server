@@ -96,12 +96,11 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: "0 0 * * *"
+          cron: "5 0 * * *"
           filters:
             branches:
               only:
                 - master
     jobs:
       - build
-      - docker_image:
-          context: org-java-ilp-connector
+      - docker_image

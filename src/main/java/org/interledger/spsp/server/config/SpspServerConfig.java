@@ -1,6 +1,8 @@
 package org.interledger.spsp.server.config;
 
 import org.interledger.core.InterledgerAddress;
+import org.interledger.crypto.EncryptedSecret;
+import org.interledger.crypto.EncryptionService;
 import org.interledger.link.Link;
 import org.interledger.spsp.server.config.crypto.CryptoConfig;
 import org.interledger.spsp.server.config.ildcp.IldcpConfig;
@@ -37,7 +39,7 @@ import java.util.function.Supplier;
 public class SpspServerConfig {
 
   @Value("${interledger.spsp-server.server-secret}")
-  private String serverSecretB64;
+  private String serverSecretProperty;
 
   @Autowired
   private ApplicationContext applicationContext;
@@ -59,10 +61,12 @@ public class SpspServerConfig {
   }
 
   @Bean
-  protected ServerSecretSupplier serverSecretSupplier() {
+  protected ServerSecretSupplier serverSecretSupplier(EncryptionService encryptionService) {
     final byte[] serverSecret;
-    if (serverSecretB64 != null) {
-      serverSecret = Base64.getDecoder().decode(serverSecretB64);
+    if (serverSecretProperty !=  null && serverSecretProperty.startsWith("enc:")) {
+      serverSecret = encryptionService.decrypt(EncryptedSecret.fromEncodedValue(serverSecretProperty));
+    } else if (serverSecretProperty != null) {
+      serverSecret = Base64.getDecoder().decode(serverSecretProperty);
     } else {
       // if `interledger.spspServer.serverSecret` is not specified, this value will be regenerated on every server
       // restart.

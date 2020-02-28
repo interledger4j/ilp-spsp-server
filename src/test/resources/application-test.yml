@@ -20,12 +20,12 @@ interledger:
         ilpOverHttp:
           incoming:
             auth_type: SIMPLE
-            token_subject: alice
+            # A simulated routing secret, which is a seed used for generating routing table auth values.
             # Represents the plaintext value of `shh`, encrypted.
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
+            simple:
+              auth_token: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
           outgoing:
             auth_type: SIMPLE
-            token_subject: bob
-            # Represents the plaintext value of `shh`, encrypted.
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
-            url: http://localhost:8080/
+            simple:
+              auth_token: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADFP1VOP5YiqFF36-RaqYRnUuqf5PrToHyM-HUvpUQ215H7BiHkIcy2TKSQO9lTlEBBVSMRUfdT0=
+            url: http://localhost:8080/ilp

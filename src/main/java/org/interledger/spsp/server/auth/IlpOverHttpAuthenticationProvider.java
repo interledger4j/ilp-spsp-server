@@ -5,7 +5,8 @@ import org.interledger.connector.accounts.AccountNotFoundProblem;
 import org.interledger.crypto.Decryptor;
 import org.interledger.crypto.EncryptedSecret;
 import org.interledger.link.http.IlpOverHttpLinkSettings;
-import org.interledger.link.http.SharedSecretTokenSettings;
+import org.interledger.link.http.IncomingLinkSettings;
+import org.interledger.link.http.SimpleAuthSettings;
 import org.interledger.spsp.server.model.ParentAccountSettings;
 import org.interledger.spsp.server.model.SpspServerSettings;
 
@@ -158,23 +159,26 @@ public class IlpOverHttpAuthenticationProvider implements AuthenticationProvider
   }
 
   /**
-   * Decrypts the shared-secret from {@link SharedSecretTokenSettings#encryptedTokenSharedSecret()} and returns it as a
+   * Decrypts the shared-secret from {@link IncomingLinkSettings} and returns it as a
    * byte-array.
    *
    * @param authPrincipal             An {@link AccountId} to decrypt a shared secret for.
-   * @param sharedSecretTokenSettings A {@link SharedSecretTokenSettings} to use while decrypting a shared secret.
+   * @param incomingLinkSettings A {@link IncomingLinkSettings} to use while decrypting a shared secret.
    *
    * @return The actual underlying shared-secret.
    */
   @VisibleForTesting
   protected final EncryptedSecret getIncomingSecret(
-    final AccountId authPrincipal, final SharedSecretTokenSettings sharedSecretTokenSettings
+    final AccountId authPrincipal, final IncomingLinkSettings incomingLinkSettings
   ) {
     Objects.requireNonNull(authPrincipal);
-    Objects.requireNonNull(sharedSecretTokenSettings);
+    Objects.requireNonNull(incomingLinkSettings);
 
-    return Optional.of(sharedSecretTokenSettings)
-      .map(SharedSecretTokenSettings::encryptedTokenSharedSecret)
+    final IlpOverHttpLinkSettings ilpOverHttpLinkSettings = IlpOverHttpLinkSettings
+      .fromCustomSettings(parentAccountSettings.customSettings()).build();
+    return ilpOverHttpLinkSettings.incomingLinkSettings()
+      .flatMap(IncomingLinkSettings::simpleAuthSettings)
+      .map(SimpleAuthSettings::authToken)
       .map(EncryptedSecret::fromEncodedValue)
       .orElseThrow(() -> new BadCredentialsException(String.format("No account found for `%s`", authPrincipal)));
   }
@@ -231,7 +235,7 @@ public class IlpOverHttpAuthenticationProvider implements AuthenticationProvider
   private EncryptedSecret getIncomingSecret(AccountId accountId) {
     final IlpOverHttpLinkSettings ilpOverHttpLinkSettings = IlpOverHttpLinkSettings
       .fromCustomSettings(parentAccountSettings.customSettings()).build();
-    return getIncomingSecret(accountId, ilpOverHttpLinkSettings.incomingHttpLinkSettings());
+    return getIncomingSecret(accountId, ilpOverHttpLinkSettings.incomingLinkSettings().get());
   }
 
 

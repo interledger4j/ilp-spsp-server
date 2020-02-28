@@ -8,6 +8,8 @@ import org.interledger.crypto.Decryptor;
 import org.interledger.link.http.IlpOverHttpLink;
 import org.interledger.link.http.IlpOverHttpLinkSettings;
 import org.interledger.link.http.IlpOverHttpLinkSettings.AuthType;
+import org.interledger.link.http.IncomingLinkSettings;
+import org.interledger.link.http.OutgoingLinkSettings;
 import org.interledger.spsp.server.auth.BearerAuthentication;
 import org.interledger.spsp.server.auth.IlpOverHttpAuthenticationProvider;
 import org.interledger.spsp.server.config.crypto.JksCryptoConfig;
@@ -160,12 +162,10 @@ public class IlpOverHttpAuthenticationProviderTest {
       .accountId(ACCOUNT_ID)
       .linkType(IlpOverHttpLink.LINK_TYPE)
       .putCustomSettings(ILP_OVER_HTTP_INCOMING + IlpOverHttpLinkSettings.AUTH_TYPE, AuthType.SIMPLE.toString())
-      .putCustomSettings(ILP_OVER_HTTP_INCOMING + IlpOverHttpLinkSettings.TOKEN_SUBJECT, ACCOUNT_ID.value())
-      .putCustomSettings(ILP_OVER_HTTP_INCOMING + IlpOverHttpLinkSettings.SHARED_SECRET, ENCRYPTED_SHH)
+      .putCustomSettings(IncomingLinkSettings.HTTP_INCOMING_SIMPLE_AUTH_TOKEN, ENCRYPTED_SHH)
 
       .putCustomSettings(ILP_OVER_HTTP_OUTGOING + IlpOverHttpLinkSettings.AUTH_TYPE, AuthType.SIMPLE.toString())
-      .putCustomSettings(ILP_OVER_HTTP_OUTGOING + IlpOverHttpLinkSettings.TOKEN_SUBJECT, ACCOUNT_ID.value())
-      .putCustomSettings(ILP_OVER_HTTP_OUTGOING + IlpOverHttpLinkSettings.SHARED_SECRET, ENCRYPTED_SHH)
+      .putCustomSettings(OutgoingLinkSettings.HTTP_OUTGOING_SIMPLE_AUTH_TOKEN, ENCRYPTED_SHH)
       .putCustomSettings(ILP_OVER_HTTP_OUTGOING + IlpOverHttpLinkSettings.URL, "http://test.com");
 
     return builder;

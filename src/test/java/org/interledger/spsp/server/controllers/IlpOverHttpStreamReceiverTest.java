@@ -126,14 +126,14 @@ public class IlpOverHttpStreamReceiverTest {
 
     final Map customSettings = new HashMap();
     customSettings.put(IncomingLinkSettings.HTTP_INCOMING_AUTH_TYPE, AuthType.SIMPLE.name());
-    customSettings.put(IncomingLinkSettings.HTTP_INCOMING_SHARED_SECRET, "n/a");
+    customSettings.put(IncomingLinkSettings.HTTP_INCOMING_SIMPLE_AUTH_TOKEN, "n/a");
 
     customSettings.put(OutgoingLinkSettings.HTTP_OUTGOING_AUTH_TYPE, AuthType.SIMPLE.name());
-    customSettings.put(OutgoingLinkSettings.HTTP_OUTGOING_TOKEN_SUBJECT, "n/a");
+    customSettings.put(OutgoingLinkSettings.HTTP_OUTGOING_SIMPLE_AUTH_TOKEN, "n/a");
 
     // Encrypted Secret is `alice:c2ho`
     customSettings.put(
-      OutgoingLinkSettings.HTTP_OUTGOING_SHARED_SECRET,
+      OutgoingLinkSettings.HTTP_OUTGOING_SIMPLE_AUTH_TOKEN,
       "enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADNEgGPoHf9LP8yoFdZ29XbeIwYmQdDXuTD1k0ATBNa1LRoeSBQmK"
     );
     customSettings.put(

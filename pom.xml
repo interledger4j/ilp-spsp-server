@@ -19,8 +19,8 @@
         <container.version>${project.version}</container.version>
 
         <java.version>1.8</java.version>
-        <ilp.version>1.0.3</ilp.version>
-        <ilp-connector.version>0.1.0</ilp-connector.version>
+        <ilp.version>1.1.1</ilp.version>
+        <ilp-connector.version>0.3.0</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>
@@ -109,6 +109,11 @@
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <version>1.2.1.RELEASE</version>
+            <artifactId>spring-cloud-gcp-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>org.interledger.connector</groupId>

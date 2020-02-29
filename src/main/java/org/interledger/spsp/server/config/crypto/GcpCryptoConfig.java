@@ -2,7 +2,6 @@ package org.interledger.spsp.server.config.crypto;
 
 import static org.interledger.connector.core.ConfigConstants.ENABLED;
 import static org.interledger.connector.core.ConfigConstants.TRUE;
-import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.GOOGLE_CLOUD_PROJECT;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_KEYSTORE_GCP;
 import static org.interledger.spsp.server.config.crypto.CryptoConfigConstants.INTERLEDGER_SPSP_SERVER_KEYSTORE_LOCATION_ID;
 

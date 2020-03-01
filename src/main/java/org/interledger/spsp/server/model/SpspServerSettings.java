@@ -1,8 +1,8 @@
 package org.interledger.spsp.server.model;
 
-import org.interledger.connector.settings.ConnectorKey;
-import org.interledger.connector.settings.ConnectorKeys;
 import org.interledger.core.InterledgerAddress;
+import org.interledger.crypto.CryptoKey;
+import org.interledger.crypto.CryptoKeys;
 import org.interledger.link.Link;
 import org.interledger.spsp.server.model.ImmutableSpspServerSettings.Builder;
 
@@ -48,10 +48,10 @@ public interface SpspServerSettings {
    * @return keys
    */
   @Value.Default
-  default ConnectorKeys keys() {
-    return ConnectorKeys.builder()
-      .accountSettings(ConnectorKey.builder().alias("accountSettings").version("1").build())
-      .secret0(ConnectorKey.builder().alias("secret0").version("1").build())
+  default CryptoKeys keys() {
+    return CryptoKeys.builder()
+      .accountSettings(CryptoKey.builder().alias("accountSettings").version("1").build())
+      .secret0(CryptoKey.builder().alias("secret0").version("1").build())
       .build();
   }
 

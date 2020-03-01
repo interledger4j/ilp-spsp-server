@@ -29,13 +29,12 @@ interledger:
         ilpOverHttp:
           incoming:
             auth_type: SIMPLE
-            token_subject: alice
             # A simulated routing secret, which is a seed used for generating routing table auth values.
             # Represents the plaintext value of `shh`, encrypted.
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
+            simple:
+              auth_token: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADKZPmASojt1iayb2bPy4D-Toq7TGLTN95HzCQAeJtz0=
           outgoing:
             auth_type: SIMPLE
-            token_subject: user_amgl3h6l
-            # This is a testnet credential in the xpring.dev testnet, so it's OK to be public.
-            shared_secret: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADFP1VOP5YiqFF36-RaqYRnUuqf5PrToHyM-HUvpUQ215H7BiHkIcy2TKSQO9lTlEBBVSMRUfdT0=
+            simple:
+              auth_token: enc:JKS:crypto.p12:secret0:1:aes_gcm:AAAADFP1VOP5YiqFF36-RaqYRnUuqf5PrToHyM-HUvpUQ215H7BiHkIcy2TKSQO9lTlEBBVSMRUfdT0=
             url: https://rs3.xpring.dev/ilp

@@ -19,8 +19,8 @@
         <container.version>${project.version}</container.version>
 
         <java.version>1.8</java.version>
-        <ilp.version>1.0.3</ilp.version>
-        <ilp-connector.version>0.1.0</ilp-connector.version>
+        <ilp.version>1.1.1</ilp.version>
+        <ilp-connector.version>0.3.0</ilp-connector.version>
         <problem.version>0.23.0</problem.version>
         <problem-spring-web.version>0.25.2</problem-spring-web.version>
         <failBuildOnAnyVulnerability>false</failBuildOnAnyVulnerability>
@@ -46,8 +46,18 @@
             <artifactId>java-jwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>jwks-rsa</artifactId>
+            <groupId>com.google.api</groupId>
+            <artifactId>gax</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>com.auth0</groupId>
+          <artifactId>jwks-rsa</artifactId>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
@@ -109,6 +119,14 @@
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gcp-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gcp-autoconfigure</artifactId>
         </dependency>
         <dependency>
             <groupId>org.interledger.connector</groupId>
@@ -177,10 +195,6 @@
         <dependency>
             <groupId>org.interledger.connector</groupId>
             <artifactId>connector-crypto</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.interledger.connector</groupId>
-            <artifactId>connector-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.interledger.connector</groupId>
@@ -421,6 +435,7 @@
                                     <ignoredDependency>com.fasterxml.jackson.module:jackson-module-kotlin:jar</ignoredDependency>
 
                                     <ignoredDependency>org.liquibase:liquibase-core:jar</ignoredDependency>
+                                    <ignoredDependency> org.springframework.cloud:spring-cloud-gcp-autoconfigure</ignoredDependency>
                                     <ignoredDependency>org.postgresql:postgresql:jar</ignoredDependency>
                                     <ignoredDependency>org.springframework</ignoredDependency>
                                     <ignoredDependency>org.springframework.boot</ignoredDependency>

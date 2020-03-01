@@ -3,8 +3,8 @@ package org.interledger.spsp.server.config.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.interledger.connector.accounts.AccountBalanceSettings;
-import org.interledger.connector.settings.ConnectorKey;
 import org.interledger.core.InterledgerAddress;
+import org.interledger.crypto.CryptoKey;
 import org.interledger.link.http.IlpOverHttpLink;
 import org.interledger.spsp.server.model.ParentAccountSettings;
 import org.interledger.spsp.server.model.SpspServerSettings;
@@ -40,9 +40,9 @@ public class SpspServerSettingsFromPropertyFileTest {
     assertThat(spspServerSettings.isRequire32ByteSharedSecrets()).isTrue();
 
     assertThat(spspServerSettings.keys().secret0())
-      .isEqualTo(ConnectorKey.builder().alias("secret0").version("2").build());
+      .isEqualTo(CryptoKey.builder().alias("secret0").version("2").build());
     assertThat(spspServerSettings.keys().accountSettings())
-      .isEqualTo(ConnectorKey.builder().alias("accounts").version("3").build());
+      .isEqualTo(CryptoKey.builder().alias("accounts").version("3").build());
 
     /////////////////////////
     // Parent Account Settings

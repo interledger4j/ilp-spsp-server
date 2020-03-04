@@ -11,8 +11,7 @@ jobs:
     working_directory: ~/repo
 
     docker:
-      # Primary container image where all commands run (need a modern JDK-8 per this link:
-      # https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class
+      # Primary container image where all commands run
       - image: circleci/openjdk:8-jdk
         environment:
           # Customize the JVM maximum heap limit

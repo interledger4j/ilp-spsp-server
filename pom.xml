@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.interledger.spsp</groupId>
     <artifactId>spsp-server</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>spsp-server</name>
     <description>An Interledger SPSP server with a stateless STREAM receiver that publishes events.</description>
 
